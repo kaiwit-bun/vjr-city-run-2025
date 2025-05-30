@@ -3,135 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vajira City run 2025</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>ระบบค้นหาข้อมูลนักวิ่ง VJR City Run 2025</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <style>
-        body {
-            font-family: 'Prompt', sans-serif;
-            background-color: #f0f9ff;
-        }
-        .runner-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-        }
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        /* Login Modal Styles */
-        #loginModal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
-        }
-        #loginModal .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .google-signin-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #4285f4;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-        }
-        .google-signin-btn:hover {
-            background: #3367d6;
-            transform: translateY(-1px);
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            rounded: 8px;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50">
     <!-- Login Modal -->
-    <div id="loginModal">
-        <div class="modal-content">
-            <div class="mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <h2 class="text-2xl font-semibold mb-2">Vajira City Run</h2>
-                <p class="text-gray-600 mb-6">กรุณาเข้าสู่ระบบด้วย Google เพื่อเข้าถึงข้อมูล</p>
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">VJR City Run 2025</h1>
+                <p class="text-gray-600">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
             </div>
             
-            <div id="g_id_onload"
-                 data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleCredentialResponse"
-                 data-auto_prompt="false">
+            <!-- Google Sign-In Button Container -->
+            <div class="flex flex-col items-center space-y-4">
+                <div id="g_id_onload"
+                     data-client_id="850045253487-ou3sr3ii0ahr0aljsunkgidrlmge0jge.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+                
+                <!-- Manual Sign-In Button (Fallback) -->
+                <button id="manualSignIn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                    เข้าสู่ระบบด้วย Google
+                </button>
             </div>
             
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="outline"
-                 data-text="signin_with"
-                 data-size="large"
-                 data-logo_alignment="left">
-            </div>
-            
-            <!-- Alternative manual button -->
-            <button id="manualSignIn" class="google-signin-btn mt-4 w-full" style="display: none;">
-                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                เข้าสู่ระบบด้วย Google
-            </button>
-            
-            <div id="loginError" class="text-red-600 mt-4 hidden">
+            <!-- Login Error -->
+            <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง
             </div>
         </div>
     </div>
 
-    <div class="min-h-screen" id="mainContent" style="display:none;">
+    <!-- Main Content -->
+    <div id="mainContent" style="display: none;">
         <!-- Header -->
-        <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 shadow-lg">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="flex items-center mb-4 md:mb-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <h1 class="text-2xl md:text-3xl font-bold">Vajira City Run</h1>
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">VJR City Run 2025</h1>
+                        <p class="text-sm text-gray-600">ระบบค้นหาข้อมูลนักวิ่ง</p>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <div id="userInfo" class="user-info"></div>
-                        <button id="signOutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all">
+                        <div id="userInfo" class="flex items-center space-x-2"></div>
+                        <button id="signOutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
                             ออกจากระบบ
                         </button>
                     </div>
@@ -139,92 +68,74 @@
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8">
-            <!-- Search Section -->
-            <section class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">ค้นหาประวัติผู้เข้าวิ่ง</h2>
-                
-                <div class="search-container">
-                    <div class="relative">
-                        <div class="flex items-center">
-                            <div class="relative flex-grow">
-                                <input type="text" id="searchInput" class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg" placeholder="ค้นหาจากชื่อ นามสกุล หรือหมายเลข BIB">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <button id="searchBtn" class="ml-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center">
-                                ค้นหา
-                            </button>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-500">ค้นหาได้จากชื่อ นามสกุล หรือหมายเลข BIB</p>
-                    </div>
-                </div>
-                
-                <!-- Loading indicator -->
-                <div id="loadingIndicator" class="text-center mt-4 hidden">
-                    <div class="inline-flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        กำลังโหลดข้อมูล...
-                    </div>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section id="resultsSection" class="hidden">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">ผลการค้นหา</h3>
-                <div id="resultsCount" class="text-sm text-gray-600 mb-4"></div>
-                
-                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Results will be populated here -->
-                </div>
-            </section>
-
-            <!-- No Results Section -->
-            <section id="noResultsSection" class="hidden">
-                <div class="bg-gray-100 rounded-lg p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h4 class="text-xl font-medium text-gray-700 mb-2">ไม่พบข้อมูลที่ค้นหา</h4>
-                    <p class="text-gray-500">กรุณาตรวจสอบข้อมูลที่ใช้ในการค้นหาอีกครั้ง</p>
-                </div>
-            </section>
-
-            <!-- Error Section -->
-            <section id="errorSection" class="hidden">
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center">
-                    <h4 class="font-semibold">เกิดข้อผิดพลาด</h4>
-                    <p id="errorMessage">ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-6">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-4 md:mb-0">
-                        <h2 class="text-xl font-bold">Vajira City Run</h2>
-                        <p class="text-gray-400 text-sm">พระนคร City Run วิ่งชมเมือง</p>
-                    </div>
-                    <div class="text-gray-400 text-sm">
-                        &copy; 2025 Vajira City Run. สงวนลิขสิทธิ์
-                    </div>
+        <!-- Search Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">ค้นหาข้อมูลนักวิ่ง</h2>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="searchInput" placeholder="ค้นหาด้วยชื่อ นามสกุล หรือเลขบัตรประชาชน..." 
+                           class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button id="searchBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        ค้นหา
+                    </button>
                 </div>
             </div>
-        </footer>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" style="display: none;" class="text-center py-8">
+                <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-blue-500 bg-blue-100">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    กำลังโหลดข้อมูล...
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <div id="errorSection" style="display: none;" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                <strong class="font-bold">เกิดข้อผิดพลาด!</strong>
+                <span id="errorMessage" class="block sm:inline"></span>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" style="display: none;">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">ผลการค้นหา</h3>
+                    <p id="resultsCount" class="text-sm text-gray-600"></p>
+                </div>
+                <div id="resultsContainer" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+            </div>
+
+            <!-- No Results Section -->
+            <div id="noResultsSection" style="display: none;" class="text-center py-12">
+                <div class="text-gray-400 mb-4">
+                    <svg class="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0118 12H22C22 6.477 18.523 2 12 2S2 6.477 2 12h4c0-3.042 1.135-5.824 3-7.938l3 2.647z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">ไม่พบข้อมูลที่ค้นหา</h3>
+                <p class="text-gray-600">ลองค้นหาด้วยคำค้นอื่น หรือตรวจสอบการสะกดอีกครั้ง</p>
+            </div>
+        </div>
     </div>
+
+    <style>
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        
+        .runner-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 
 <script>
     // Configuration
-    const GOOGLE_CLIENT_ID = '850045253487-ou3sr3ii0ahr0aljsunkgidrlmge0jge.apps.googleusercontent.com'; // Replace with your actual client ID
+    const GOOGLE_CLIENT_ID = '850045253487-ou3sr3ii0ahr0aljsunkgidrlmge0jge.apps.googleusercontent.com';
     const SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxbFgN-2kSA3_7XlvVIxJJ9SiTzjH2lL3dE-Dh5xrO63-okSPj01qNxY25_f9Ng68Cn9A/exec';
     
     // Global variables
@@ -243,35 +154,87 @@
 
     // Initialize Google Sign-In
     function initializeGoogleSignIn() {
-        // Update the data-client_id attribute
-        const onloadDiv = document.getElementById('g_id_onload');
-        if (onloadDiv) {
-            onloadDiv.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+        // Initialize the Google Identity Services library
+        if (typeof google !== 'undefined' && google.accounts) {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: false
+            });
+            
+            // Render the sign-in button
+            google.accounts.id.renderButton(
+                document.querySelector('.g_id_signin'),
+                { 
+                    theme: 'outline', 
+                    size: 'large',
+                    type: 'standard',
+                    text: 'signin_with',
+                    logo_alignment: 'left'
+                }
+            );
         }
         
         // Manual sign-in button fallback
         document.getElementById('manualSignIn').addEventListener('click', () => {
-            // This would require implementing the Google Sign-In flow manually
-            // For now, show the auto-generated button
-            console.log('Manual sign-in clicked');
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.prompt();
+            } else {
+                showLoginError();
+            }
         });
     }
 
-    // Handle Google Sign-In response
+    // Handle Google Sign-In response - แก้ไขการจัดการ JWT
     function handleCredentialResponse(response) {
         try {
-            // Decode the JWT token to get user info
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            console.log('Received credential response:', response);
+            
+            if (!response.credential) {
+                throw new Error('No credential received');
+            }
+
+            // แยก JWT token และ decode payload
+            const token = response.credential;
+            const parts = token.split('.');
+            
+            if (parts.length !== 3) {
+                throw new Error('Invalid JWT format');
+            }
+
+            // Decode payload (ส่วนที่ 2 ของ JWT)
+            let payload;
+            try {
+                // เพิ่ม padding ถ้าจำเป็น
+                let base64Payload = parts[1];
+                while (base64Payload.length % 4) {
+                    base64Payload += '=';
+                }
+                
+                // Decode Base64URL
+                const jsonPayload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
+                payload = JSON.parse(jsonPayload);
+            } catch (decodeError) {
+                console.error('Error decoding JWT:', decodeError);
+                throw new Error('Failed to decode user information');
+            }
+            
+            // ตรวจสอบข้อมูลผู้ใช้
+            if (!payload.sub || !payload.email) {
+                throw new Error('Invalid user information');
+            }
             
             currentUser = {
                 id: payload.sub,
                 email: payload.email,
-                name: payload.name,
-                picture: payload.picture
+                name: payload.name || payload.email,
+                picture: payload.picture || 'https://www.freeiconspng.com/uploads/profile-icon-9.png'
             };
             
-            accessToken = response.credential;
+            accessToken = token;
             
+            console.log('User signed in successfully:', currentUser);
             showMainContent();
             loadRunnerData();
             
@@ -291,55 +254,77 @@
             <img src="${currentUser.picture}" alt="${currentUser.name}" class="user-avatar">
             <span class="text-sm">${currentUser.name}</span>
         `;
+        
+        // Hide login error if visible
+        document.getElementById('loginError').classList.add('hidden');
     }
 
     // Show login error
     function showLoginError() {
-        document.getElementById('loginError').classList.remove('hidden');
+        const loginError = document.getElementById('loginError');
+        loginError.classList.remove('hidden');
+        loginError.scrollIntoView({ behavior: 'smooth' });
     }
 
     // Sign out function
     function signOut() {
-        // Sign out from Google
-        if (typeof google !== 'undefined' && google.accounts) {
-            google.accounts.id.disableAutoSelect();
+        try {
+            // Sign out from Google
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            
+            // Reset application state
+            currentUser = null;
+            accessToken = null;
+            runnersData = [];
+            
+            // Show login modal
+            mainContent.style.display = 'none';
+            loginModal.style.display = 'flex';
+            
+            // Clear any error states
+            hideAllSections();
+            
+            console.log('User signed out successfully');
+        } catch (error) {
+            console.error('Error during sign out:', error);
         }
-        
-        // Reset application state
-        currentUser = null;
-        accessToken = null;
-        runnersData = [];
-        
-        // Show login modal
-        mainContent.style.display = 'none';
-        loginModal.style.display = 'flex';
-        
-        // Clear any error states
-        hideAllSections();
     }
 
-    // Load runner data from Google Apps Script
+    // Load runner data from Google Apps Script - ปรับปรุงการจัดการ Error
     async function loadRunnerData() {
         try {
             showLoading(true);
             hideError();
             
+            console.log('Loading runner data from:', SCRIPT_WEB_APP_URL);
+            
             const response = await fetch(SCRIPT_WEB_APP_URL, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                // เอา Authorization header ออกก่อน เพื่อทดสอบ
+                // 'Authorization': `Bearer ${accessToken}`,
             });
+            
+            console.log('Response status:', response.status);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
             const data = await response.json();
+            console.log('Received data:', data);
             
             if (data.error) {
                 throw new Error(data.error);
+            }
+            
+            // ตรวจสอบว่าข้อมูลเป็น Array
+            if (!Array.isArray(data)) {
+                throw new Error('ข้อมูลที่ได้รับไม่ถูกต้อง');
             }
             
             runnersData = data.map(runner => ({
@@ -357,6 +342,7 @@
                 profileImage: ''
             }));
             
+            console.log('Processed runners data:', runnersData.length, 'records');
             displayResults(runnersData);
             showLoading(false);
             
@@ -378,7 +364,10 @@
 
         const results = runnersData.filter(runner => {
             const idCardStr = runner.idCard ? String(runner.idCard).toLowerCase() : '';
-            return runner.firstName.toLowerCase().includes(searchTerm) ||
+            const fullName = `${runner.firstName} ${runner.lastName}`.toLowerCase();
+            
+            return fullName.includes(searchTerm) ||
+                   runner.firstName.toLowerCase().includes(searchTerm) ||
                    runner.lastName.toLowerCase().includes(searchTerm) ||
                    idCardStr.includes(searchTerm);
         });
@@ -444,6 +433,7 @@
     function showError(message) {
         errorMessage.textContent = message;
         errorSection.style.display = 'block';
+        errorSection.scrollIntoView({ behavior: 'smooth' });
     }
 
     function hideError() {
@@ -465,7 +455,25 @@
 
     // Initialize the application
     document.addEventListener('DOMContentLoaded', function() {
-        initializeGoogleSignIn();
+        console.log('DOM loaded, initializing Google Sign-In...');
+        
+        // รอให้ Google Identity Services โหลดเสร็จ
+        const checkGoogleLoaded = setInterval(() => {
+            if (typeof google !== 'undefined' && google.accounts) {
+                clearInterval(checkGoogleLoaded);
+                initializeGoogleSignIn();
+                console.log('Google Identity Services initialized');
+            }
+        }, 100);
+        
+        // Timeout หากโหลดไม่สำเร็จ
+        setTimeout(() => {
+            if (typeof google === 'undefined') {
+                clearInterval(checkGoogleLoaded);
+                console.error('Failed to load Google Identity Services');
+                showLoginError();
+            }
+        }, 10000);
     });
 
     // Make handleCredentialResponse available globally for Google Sign-In
