@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -7,6 +6,7 @@
     <title>Vajira City run 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body {
             font-family: 'Prompt', sans-serif;
@@ -20,8 +20,8 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        /* Modal Styles */
-        #passwordModal {
+        /* Login Modal Styles */
+        #loginModal {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.6);
@@ -30,7 +30,7 @@
             align-items: center;
             z-index: 50;
         }
-        #passwordModal .modal-content {
+        #loginModal .modal-content {
             background: white;
             padding: 2rem;
             border-radius: 0.75rem;
@@ -39,32 +39,86 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
         }
+        .google-signin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        .google-signin-btn:hover {
+            background: #3367d6;
+            transform: translateY(-1px);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            rounded: 8px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
-        <!-- Password Modal -->
-    <div id="passwordModal">
+    <!-- Login Modal -->
+    <div id="loginModal">
         <div class="modal-content">
-            <h2 class="text-2xl font-semibold mb-4">กรุณาใส่รหัสผ่าน</h2>
-            <input
-                type="password"
-                id="passwordInput"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4"
-                placeholder="รหัสผ่าน"
-            />
-            <button
-                id="passwordSubmitBtn"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all w-full"
-            >
-                ยืนยัน
+            <div class="mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h2 class="text-2xl font-semibold mb-2">Vajira City Run</h2>
+                <p class="text-gray-600 mb-6">กรุณาเข้าสู่ระบบด้วย Google เพื่อเข้าถึงข้อมูล</p>
+            </div>
+            
+            <div id="g_id_onload"
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left">
+            </div>
+            
+            <!-- Alternative manual button -->
+            <button id="manualSignIn" class="google-signin-btn mt-4 w-full" style="display: none;">
+                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                เข้าสู่ระบบด้วย Google
             </button>
-        <p id="passwordError" class="text-red-600 mt-2 hidden">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</p>
+            
+            <div id="loginError" class="text-red-600 mt-4 hidden">
+                เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง
+            </div>
         </div>
     </div>
 
     <div class="min-h-screen" id="mainContent" style="display:none;">
-
-    <div class="min-h-screen">
         <!-- Header -->
         <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 shadow-lg">
             <div class="container mx-auto px-4">
@@ -75,7 +129,11 @@
                         </svg>
                         <h1 class="text-2xl md:text-3xl font-bold">Vajira City Run</h1>
                     </div>
-                    <div class="text-sm md:text-base">
+                    <div class="flex items-center space-x-4">
+                        <div id="userInfo" class="user-info"></div>
+                        <button id="signOutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all">
+                            ออกจากระบบ
+                        </button>
                     </div>
                 </div>
             </div>
@@ -105,6 +163,17 @@
                         <p class="mt-2 text-sm text-gray-500">ค้นหาได้จากชื่อ นามสกุล หรือหมายเลข BIB</p>
                     </div>
                 </div>
+                
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" class="text-center mt-4 hidden">
+                    <div class="inline-flex items-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        กำลังโหลดข้อมูล...
+                    </div>
+                </div>
             </section>
 
             <!-- Results Section -->
@@ -127,6 +196,14 @@
                     <p class="text-gray-500">กรุณาตรวจสอบข้อมูลที่ใช้ในการค้นหาอีกครั้ง</p>
                 </div>
             </section>
+
+            <!-- Error Section -->
+            <section id="errorSection" class="hidden">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center">
+                    <h4 class="font-semibold">เกิดข้อผิดพลาด</h4>
+                    <p id="errorMessage">ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
+                </div>
+            </section>
         </main>
 
         <!-- Footer -->
@@ -144,155 +221,255 @@
             </div>
         </footer>
     </div>
+
 <script>
-    const PASSWORD_HASH = 'bd55573dfcd19a54fd32980c8f02ee8540cf771c01d041db56b4c51a1e9a3f8c'; 
+    // Configuration
+    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'; // Replace with your actual client ID
+    const SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxbFgN-2kSA3_7XlvVIxJJ9SiTzjH2lL3dE-Dh5xrO63-okSPj01qNxY25_f9Ng68Cn9A/exec';
+    
+    // Global variables
+    let currentUser = null;
+    let accessToken = null;
+    let runnersData = [];
 
-    const passwordModal = document.getElementById('passwordModal');
-    const passwordInput = document.getElementById('passwordInput');
-    const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
-    const passwordError = document.getElementById('passwordError');
+    // DOM elements
+    const loginModal = document.getElementById('loginModal');
     const mainContent = document.getElementById('mainContent');
+    const userInfo = document.getElementById('userInfo');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorSection = document.getElementById('errorSection');
+    const errorMessage = document.getElementById('errorMessage');
 
-    passwordSubmitBtn.addEventListener('click', () => {
-    checkPassword();
-    });
-    passwordInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkPassword();
-    });
+    // Initialize Google Sign-In
+    function initializeGoogleSignIn() {
+        // Update the data-client_id attribute
+        const onloadDiv = document.getElementById('g_id_onload');
+        if (onloadDiv) {
+            onloadDiv.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+        }
+        
+        // Manual sign-in button fallback
+        document.getElementById('manualSignIn').addEventListener('click', () => {
+            // This would require implementing the Google Sign-In flow manually
+            // For now, show the auto-generated button
+            console.log('Manual sign-in clicked');
+        });
+    }
 
-    async function checkPassword() {
-    const input = passwordInput.value.trim();
-    const hashedInput = await sha256(input);
-    if (hashedInput === PASSWORD_HASH) {
-        passwordError.classList.add('hidden');
-        passwordModal.style.display = 'none';
+    // Handle Google Sign-In response
+    function handleCredentialResponse(response) {
+        try {
+            // Decode the JWT token to get user info
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            
+            currentUser = {
+                id: payload.sub,
+                email: payload.email,
+                name: payload.name,
+                picture: payload.picture
+            };
+            
+            accessToken = response.credential;
+            
+            showMainContent();
+            loadRunnerData();
+            
+        } catch (error) {
+            console.error('Error handling sign-in:', error);
+            showLoginError();
+        }
+    }
+
+    // Show main content after successful login
+    function showMainContent() {
+        loginModal.style.display = 'none';
         mainContent.style.display = 'block';
-        // loadDataAndSetup(); // เรียกเมื่อจำเป็น
-    } else {
-        passwordError.classList.remove('hidden');
-        passwordInput.value = '';
-        passwordInput.focus();
-    }
-    }
-
-    async function sha256(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        // Update user info in header
+        userInfo.innerHTML = `
+            <img src="${currentUser.picture}" alt="${currentUser.name}" class="user-avatar">
+            <span class="text-sm">${currentUser.name}</span>
+        `;
     }
 
-  const scriptWebAppURL = 'https://script.google.com/macros/s/AKfycbxbFgN-2kSA3_7XlvVIxJJ9SiTzjH2lL3dE-Dh5xrO63-okSPj01qNxY25_f9Ng68Cn9A/exec'; // URL จาก Google Apps Script
-
-  let runnersData = [];
-
-  fetch(scriptWebAppURL)
-    .then(response => response.json())
-    .then(data => {
-      runnersData = data.map(runner => ({
-        timestamp: runner['ประทับเวลา'] || '',
-        idCard: runner['เลขบัตรประจำตัวประชาชน'] || '',
-        title: runner['คำนำหน้า'] || '',
-        firstName: runner['ชื่อ'] || '',
-        lastName: runner['สกุล'] || '',
-        age: parseInt(runner['อายุ'], 10) || 0,
-        gender: runner['เพศ'] || '',
-        phone: runner['เบอร์โทรติดต่อ'] || '',
-        emergencyPhone: runner['เบอร์โทรติดต่อกรณีฉุกเฉิน'] || '',
-        disease: runner['โรคประจำตัว'] || '',
-        km: runner['กรุณาเลือกจำนวน KM ที่ต้องการ'] || '',
-        profileImage: '', // ไม่มีข้อมูลภาพ, ถ้าอยากใช้รูป default
-      }));
-
-      displayResults(runnersData); // แสดงผลข้อมูลทั้งหมดตอนโหลดเสร็จ
-    })
-    .catch(err => console.error('Error fetching data:', err));
-
-  document.getElementById('searchBtn').addEventListener('click', performSearch);
-  document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') performSearch();
-  });
-
-function performSearch() {
-  const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-  if (!searchTerm) {
-    displayResults(runnersData);
-    return;
-  }
-
-  const results = runnersData.filter(runner => {
-    const idCardStr = runner.idCard ? String(runner.idCard).toLowerCase() : '';
-    return runner.firstName.toLowerCase().includes(searchTerm) ||
-           runner.lastName.toLowerCase().includes(searchTerm) ||
-           idCardStr.includes(searchTerm);
-  });
-
-  console.log('results:', results);
-  displayResults(results);
-}
-
-
-  const results = runnersData.filter(runner =>
-    runner.firstName.toLowerCase().includes(searchTerm) ||
-    runner.lastName.toLowerCase().includes(searchTerm) ||
-    runner.idCard.includes(searchTerm)
-  );
-
-  console.log('results:', results); // ดูข้อมูลที่กรองได้
-  displayResults(results);
-
-  function displayResults(results) {
-    const resultsSection = document.getElementById('resultsSection');
-    const noResultsSection = document.getElementById('noResultsSection');
-    const resultsContainer = document.getElementById('resultsContainer');
-    const resultsCount = document.getElementById('resultsCount');
-
-    resultsContainer.innerHTML = '';
-
-    if (results.length > 0) {
-      resultsSection.style.display = 'block';
-      noResultsSection.style.display = 'none';
-
-      resultsCount.textContent = `พบข้อมูลทั้งหมด ${results.length} รายการ`;
-
-      results.forEach(runner => {
-        const div = document.createElement('div');
-        div.className = 'runner-card';
-        div.style.border = '1px solid #ccc';
-        div.style.padding = '10px';
-        div.style.marginBottom = '10px';
-        div.style.borderRadius = '8px';
-        div.style.backgroundColor = '#fff';
-        div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-
-        const eventsHTML = '<p class="text-gray-500 italic">ไม่มีข้อมูลการแข่งขัน</p>'; // กำหนดข้อความแทน
-
-        div.innerHTML = `
-  <div class="p-5">
-    <div class="flex items-center space-x-4">
-      <img src="https://www.freeiconspng.com/uploads/profile-icon-9.png" alt="${runner.firstName}" class="w-20 h-20 rounded-full object-cover shadow-md">
-      <div class="flex-1">
-        <h3 class="text-xl font-semibold text-gray-900">${runner.title} ${runner.firstName} ${runner.lastName}</h3>
-        <p class="text-gray-600 mt-1">เลขบัตรประชาชน: <span class="font-medium">${runner.idCard}</span></p>
-        <div class="flex space-x-4 mt-2 text-sm text-gray-700">
-          <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">${runner.gender}</span>
-          <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">${runner.age} ปี</span>
-          <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">ระยะทาง: ${runner.km}</span>
-        </div>
-        <p class="mt-2 text-gray-600">เบอร์โทรติดต่อ: <span class="font-medium">${runner.phone}</span></p>
-        <p class="text-gray-600">เบอร์ฉุกเฉิน: <span class="font-medium">${runner.emergencyPhone}</span></p>
-        <p class="mt-2 text-red-600 font-semibold">โรคประจำตัว: <span class="font-normal">${runner.disease || 'ไม่มีข้อมูล'}</span></p>
-      </div>
-    </div>
-  </div>
-`;
-
-
-        resultsContainer.appendChild(div);
-      });
-    } else {
-      resultsSection.style.display = 'none';
-      noResultsSection.style.display = 'block';
+    // Show login error
+    function showLoginError() {
+        document.getElementById('loginError').classList.remove('hidden');
     }
-  }
+
+    // Sign out function
+    function signOut() {
+        // Sign out from Google
+        if (typeof google !== 'undefined' && google.accounts) {
+            google.accounts.id.disableAutoSelect();
+        }
+        
+        // Reset application state
+        currentUser = null;
+        accessToken = null;
+        runnersData = [];
+        
+        // Show login modal
+        mainContent.style.display = 'none';
+        loginModal.style.display = 'flex';
+        
+        // Clear any error states
+        hideAllSections();
+    }
+
+    // Load runner data from Google Apps Script
+    async function loadRunnerData() {
+        try {
+            showLoading(true);
+            hideError();
+            
+            const response = await fetch(SCRIPT_WEB_APP_URL, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            runnersData = data.map(runner => ({
+                timestamp: runner['ประทับเวลา'] || '',
+                idCard: runner['เลขบัตรประจำตัวประชาชน'] || '',
+                title: runner['คำนำหน้า'] || '',
+                firstName: runner['ชื่อ'] || '',
+                lastName: runner['สกุล'] || '',
+                age: parseInt(runner['อายุ'], 10) || 0,
+                gender: runner['เพศ'] || '',
+                phone: runner['เบอร์โทรติดต่อ'] || '',
+                emergencyPhone: runner['เบอร์โทรติดต่อกรณีฉุกเฉิน'] || '',
+                disease: runner['โรคประจำตัว'] || '',
+                km: runner['กรุณาเลือกจำนวน KM ที่ต้องการ'] || '',
+                profileImage: ''
+            }));
+            
+            displayResults(runnersData);
+            showLoading(false);
+            
+        } catch (error) {
+            console.error('Error loading runner data:', error);
+            showError(`ไม่สามารถโหลดข้อมูลได้: ${error.message}`);
+            showLoading(false);
+        }
+    }
+
+    // Search functionality
+    function performSearch() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        
+        if (!searchTerm) {
+            displayResults(runnersData);
+            return;
+        }
+
+        const results = runnersData.filter(runner => {
+            const idCardStr = runner.idCard ? String(runner.idCard).toLowerCase() : '';
+            return runner.firstName.toLowerCase().includes(searchTerm) ||
+                   runner.lastName.toLowerCase().includes(searchTerm) ||
+                   idCardStr.includes(searchTerm);
+        });
+
+        displayResults(results);
+    }
+
+    // Display search results
+    function displayResults(results) {
+        const resultsSection = document.getElementById('resultsSection');
+        const noResultsSection = document.getElementById('noResultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsCount = document.getElementById('resultsCount');
+
+        resultsContainer.innerHTML = '';
+        hideError();
+
+        if (results.length > 0) {
+            resultsSection.style.display = 'block';
+            noResultsSection.style.display = 'none';
+
+            resultsCount.textContent = `พบข้อมูลทั้งหมด ${results.length} รายการ`;
+
+            results.forEach(runner => {
+                const div = document.createElement('div');
+                div.className = 'runner-card bg-white rounded-lg shadow-md transition-all duration-300 cursor-pointer';
+
+                div.innerHTML = `
+                    <div class="p-5">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://www.freeiconspng.com/uploads/profile-icon-9.png" alt="${runner.firstName}" class="w-20 h-20 rounded-full object-cover shadow-md">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-900">${runner.title} ${runner.firstName} ${runner.lastName}</h3>
+                                <p class="text-gray-600 mt-1">เลขบัตรประชาชน: <span class="font-medium">${runner.idCard}</span></p>
+                                <div class="flex flex-wrap gap-2 mt-2 text-sm">
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">${runner.gender}</span>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">${runner.age} ปี</span>
+                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">ระยะทาง: ${runner.km}</span>
+                                </div>
+                                <div class="mt-3 space-y-1 text-sm text-gray-600">
+                                    <p>เบอร์โทรติดต่อ: <span class="font-medium">${runner.phone}</span></p>
+                                    <p>เบอร์ฉุกเฉิน: <span class="font-medium">${runner.emergencyPhone}</span></p>
+                                    <p class="text-red-600 font-semibold">โรคประจำตัว: <span class="font-normal">${runner.disease || 'ไม่มีข้อมูล'}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                resultsContainer.appendChild(div);
+            });
+        } else {
+            resultsSection.style.display = 'none';
+            noResultsSection.style.display = 'block';
+        }
+    }
+
+    // Utility functions
+    function showLoading(show) {
+        loadingIndicator.style.display = show ? 'block' : 'none';
+    }
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorSection.style.display = 'block';
+    }
+
+    function hideError() {
+        errorSection.style.display = 'none';
+    }
+
+    function hideAllSections() {
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('noResultsSection').style.display = 'none';
+        hideError();
+    }
+
+    // Event listeners
+    signOutBtn.addEventListener('click', signOut);
+    document.getElementById('searchBtn').addEventListener('click', performSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') performSearch();
+    });
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeGoogleSignIn();
+    });
+
+    // Make handleCredentialResponse available globally for Google Sign-In
+    window.handleCredentialResponse = handleCredentialResponse;
 </script>
 
 </body>
