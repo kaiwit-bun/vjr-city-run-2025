@@ -181,21 +181,6 @@
                 </div>
             </section>
         </main>
-
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-6">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-4 md:mb-0">
-                        <h2 class="text-xl font-bold">Vajira City Run</h2>
-                        <p class="text-gray-400 text-sm">พระนคร City Run วิ่งชมเมือง</p>
-                    </div>
-                    <div class="text-gray-400 text-sm">
-                        &copy; 2025 Vajira City Run. สงวนลิขสิทธิ์
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
 
 <script>
@@ -278,7 +263,7 @@
                 }
                 
                 // Decode Base64URL
-const jsonPayload = decodeURIComponent(escape(window.atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'))));
+                const jsonPayload = decodeURIComponent(escape(window.atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'))));
                 payload = JSON.parse(jsonPayload);
             } catch (decodeError) {
                 console.error('Error decoding JWT:', decodeError);
