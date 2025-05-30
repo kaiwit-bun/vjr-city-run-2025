@@ -278,7 +278,7 @@
                 }
                 
                 // Decode Base64URL
-                const jsonPayload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
+const jsonPayload = decodeURIComponent(escape(window.atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'))));
                 payload = JSON.parse(jsonPayload);
             } catch (decodeError) {
                 console.error('Error decoding JWT:', decodeError);
