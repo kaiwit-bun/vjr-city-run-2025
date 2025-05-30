@@ -3,13 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบค้นหาข้อมูลนักวิ่ง VJR City Run 2025</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>Vajira City run 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .runner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Login Modal Styles */
+        #loginModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        #loginModal .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .google-signin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        .google-signin-btn:hover {
+            background: #3367d6;
+            transform: translateY(-1px);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            rounded: 8px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body>
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-900 mb-2">VJR City Run 2025</h1>
@@ -48,19 +113,20 @@
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="mainContent" style="display: none;">
+    <div class="min-h-screen" id="mainContent" style="display:none;">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900">VJR City Run 2025</h1>
-                        <p class="text-sm text-gray-600">ระบบค้นหาข้อมูลนักวิ่ง</p>
+        <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <h1 class="text-2xl md:text-3xl font-bold">Vajira City Run</h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <div id="userInfo" class="flex items-center space-x-2"></div>
-                        <button id="signOutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        <div id="userInfo" class="user-info"></div>
+                        <button id="signOutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all">
                             ออกจากระบบ
                         </button>
                     </div>
@@ -68,70 +134,69 @@
             </div>
         </header>
 
-        <!-- Search Section -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">ค้นหาข้อมูลนักวิ่ง</h2>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="text" id="searchInput" placeholder="ค้นหาด้วยชื่อ นามสกุล หรือเลขบัตรประชาชน..." 
-                           class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <button id="searchBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                        ค้นหา
-                    </button>
+       <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Search Section -->
+            <section class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">ค้นหาประวัติผู้เข้าวิ่ง</h2>
+                
+                <div class="search-container">
+                    <div class="relative">
+                        <div class="flex items-center">
+                            <div class="relative flex-grow">
+                                <input type="text" id="searchInput" class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg" placeholder="ค้นหาจากชื่อ นามสกุล หรือหมายเลข BIB">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <button id="searchBtn" class="ml-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center">
+                                ค้นหา
+                            </button>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">ค้นหาได้จากชื่อ นามสกุล หรือหมายเลข BIB</p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Loading Indicator -->
-            <div id="loadingIndicator" style="display: none;" class="text-center py-8">
-                <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-blue-500 bg-blue-100">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    กำลังโหลดข้อมูล...
-                </div>
-            </div>
-
-            <!-- Error Section -->
-            <div id="errorSection" style="display: none;" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                <strong class="font-bold">เกิดข้อผิดพลาด!</strong>
-                <span id="errorMessage" class="block sm:inline"></span>
-            </div>
+            </section>
 
             <!-- Results Section -->
-            <div id="resultsSection" style="display: none;">
-                <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">ผลการค้นหา</h3>
-                    <p id="resultsCount" class="text-sm text-gray-600"></p>
+            <section id="resultsSection" class="hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">ผลการค้นหา</h3>
+                <div id="resultsCount" class="text-sm text-gray-600 mb-4"></div>
+                
+                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Results will be populated here -->
                 </div>
-                <div id="resultsContainer" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
-            </div>
+            </section>
 
             <!-- No Results Section -->
-            <div id="noResultsSection" style="display: none;" class="text-center py-12">
-                <div class="text-gray-400 mb-4">
-                    <svg class="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0118 12H22C22 6.477 18.523 2 12 2S2 6.477 2 12h4c0-3.042 1.135-5.824 3-7.938l3 2.647z"></path>
+            <section id="noResultsSection" class="hidden">
+                <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
+                    <h4 class="text-xl font-medium text-gray-700 mb-2">ไม่พบข้อมูลที่ค้นหา</h4>
+                    <p class="text-gray-500">กรุณาตรวจสอบข้อมูลที่ใช้ในการค้นหาอีกครั้ง</p>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">ไม่พบข้อมูลที่ค้นหา</h3>
-                <p class="text-gray-600">ลองค้นหาด้วยคำค้นอื่น หรือตรวจสอบการสะกดอีกครั้ง</p>
-            </div>
-        </div>
-    </div>
+            </section>
+        </main>
 
-    <style>
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-        
-        .runner-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-    </style>
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-xl font-bold">Vajira City Run</h2>
+                        <p class="text-gray-400 text-sm">พระนคร City Run วิ่งชมเมือง</p>
+                    </div>
+                    <div class="text-gray-400 text-sm">
+                        &copy; 2025 Vajira City Run. สงวนลิขสิทธิ์
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
 <script>
     // Configuration
