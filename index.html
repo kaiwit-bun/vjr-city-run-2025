@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vajira City run 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .runner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Modal Styles */
+        #passwordModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        #passwordModal .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+        <!-- Password Modal -->
+    <div id="passwordModal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-semibold mb-4">กรุณาใส่รหัสผ่าน</h2>
+            <input
+                type="password"
+                id="passwordInput"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4"
+                placeholder="รหัสผ่าน"
+            />
+            <button
+                id="passwordSubmitBtn"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all w-full"
+            >
+                ยืนยัน
+            </button>
+        <p id="passwordError" class="text-red-600 mt-2 hidden">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</p>
+        </div>
+    </div>
+
+    <div class="min-h-screen" id="mainContent" style="display:none;">
+
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <h1 class="text-2xl md:text-3xl font-bold">Vajira City Run</h1>
+                    </div>
+                    <div class="text-sm md:text-base">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Search Section -->
+            <section class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">ค้นหาประวัติผู้เข้าวิ่ง</h2>
+                
+                <div class="search-container">
+                    <div class="relative">
+                        <div class="flex items-center">
+                            <div class="relative flex-grow">
+                                <input type="text" id="searchInput" class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg" placeholder="ค้นหาจากชื่อ นามสกุล หรือหมายเลข BIB">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <button id="searchBtn" class="ml-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center">
+                                ค้นหา
+                            </button>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">ค้นหาได้จากชื่อ นามสกุล หรือหมายเลข BIB</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">ผลการค้นหา</h3>
+                <div id="resultsCount" class="text-sm text-gray-600 mb-4"></div>
+                
+                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Results will be populated here -->
+                </div>
+            </section>
+
+            <!-- No Results Section -->
+            <section id="noResultsSection" class="hidden">
+                <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h4 class="text-xl font-medium text-gray-700 mb-2">ไม่พบข้อมูลที่ค้นหา</h4>
+                    <p class="text-gray-500">กรุณาตรวจสอบข้อมูลที่ใช้ในการค้นหาอีกครั้ง</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-xl font-bold">Vajira City Run</h2>
+                        <p class="text-gray-400 text-sm">พระนคร City Run วิ่งชมเมือง</p>
+                    </div>
+                    <div class="text-gray-400 text-sm">
+                        &copy; 2025 Vajira City Run. สงวนลิขสิทธิ์
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+<script>
+    const PASSWORD_HASH = 'bd55573dfcd19a54fd32980c8f02ee8540cf771c01d041db56b4c51a1e9a3f8c'; 
+
+    const passwordModal = document.getElementById('passwordModal');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
+    const passwordError = document.getElementById('passwordError');
+    const mainContent = document.getElementById('mainContent');
+
+    passwordSubmitBtn.addEventListener('click', () => {
+    checkPassword();
+    });
+    passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkPassword();
+    });
+
+    async function checkPassword() {
+    const input = passwordInput.value.trim();
+    const hashedInput = await sha256(input);
+    if (hashedInput === PASSWORD_HASH) {
+        passwordError.classList.add('hidden');
+        passwordModal.style.display = 'none';
+        mainContent.style.display = 'block';
+        // loadDataAndSetup(); // เรียกเมื่อจำเป็น
+    } else {
+        passwordError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+    }
+    }
+
+    async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+  const scriptWebAppURL = 'https://script.google.com/macros/s/AKfycbxbFgN-2kSA3_7XlvVIxJJ9SiTzjH2lL3dE-Dh5xrO63-okSPj01qNxY25_f9Ng68Cn9A/exec'; // URL จาก Google Apps Script
+
+  let runnersData = [];
+
+  fetch(scriptWebAppURL)
+    .then(response => response.json())
+    .then(data => {
+      runnersData = data.map(runner => ({
+        timestamp: runner['ประทับเวลา'] || '',
+        idCard: runner['เลขบัตรประจำตัวประชาชน'] || '',
+        title: runner['คำนำหน้า'] || '',
+        firstName: runner['ชื่อ'] || '',
+        lastName: runner['สกุล'] || '',
+        age: parseInt(runner['อายุ'], 10) || 0,
+        gender: runner['เพศ'] || '',
+        phone: runner['เบอร์โทรติดต่อ'] || '',
+        emergencyPhone: runner['เบอร์โทรติดต่อกรณีฉุกเฉิน'] || '',
+        disease: runner['โรคประจำตัว'] || '',
+        km: runner['กรุณาเลือกจำนวน KM ที่ต้องการ'] || '',
+        profileImage: '', // ไม่มีข้อมูลภาพ, ถ้าอยากใช้รูป default
+      }));
+
+      displayResults(runnersData); // แสดงผลข้อมูลทั้งหมดตอนโหลดเสร็จ
+    })
+    .catch(err => console.error('Error fetching data:', err));
+
+  document.getElementById('searchBtn').addEventListener('click', performSearch);
+  document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') performSearch();
+  });
+
+function performSearch() {
+  const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!searchTerm) {
+    displayResults(runnersData);
+    return;
+  }
+
+  const results = runnersData.filter(runner => {
+    const idCardStr = runner.idCard ? String(runner.idCard).toLowerCase() : '';
+    return runner.firstName.toLowerCase().includes(searchTerm) ||
+           runner.lastName.toLowerCase().includes(searchTerm) ||
+           idCardStr.includes(searchTerm);
+  });
+
+  console.log('results:', results);
+  displayResults(results);
+}
+
+
+  const results = runnersData.filter(runner =>
+    runner.firstName.toLowerCase().includes(searchTerm) ||
+    runner.lastName.toLowerCase().includes(searchTerm) ||
+    runner.idCard.includes(searchTerm)
+  );
+
+  console.log('results:', results); // ดูข้อมูลที่กรองได้
+  displayResults(results);
+
+  function displayResults(results) {
+    const resultsSection = document.getElementById('resultsSection');
+    const noResultsSection = document.getElementById('noResultsSection');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsCount = document.getElementById('resultsCount');
+
+    resultsContainer.innerHTML = '';
+
+    if (results.length > 0) {
+      resultsSection.style.display = 'block';
+      noResultsSection.style.display = 'none';
+
+      resultsCount.textContent = `พบข้อมูลทั้งหมด ${results.length} รายการ`;
+
+      results.forEach(runner => {
+        const div = document.createElement('div');
+        div.className = 'runner-card';
+        div.style.border = '1px solid #ccc';
+        div.style.padding = '10px';
+        div.style.marginBottom = '10px';
+        div.style.borderRadius = '8px';
+        div.style.backgroundColor = '#fff';
+        div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+
+        const eventsHTML = '<p class="text-gray-500 italic">ไม่มีข้อมูลการแข่งขัน</p>'; // กำหนดข้อความแทน
+
+        div.innerHTML = `
+  <div class="p-5">
+    <div class="flex items-center space-x-4">
+      <img src="https://www.freeiconspng.com/uploads/profile-icon-9.png" alt="${runner.firstName}" class="w-20 h-20 rounded-full object-cover shadow-md">
+      <div class="flex-1">
+        <h3 class="text-xl font-semibold text-gray-900">${runner.title} ${runner.firstName} ${runner.lastName}</h3>
+        <p class="text-gray-600 mt-1">เลขบัตรประชาชน: <span class="font-medium">${runner.idCard}</span></p>
+        <div class="flex space-x-4 mt-2 text-sm text-gray-700">
+          <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">${runner.gender}</span>
+          <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">${runner.age} ปี</span>
+          <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">ระยะทาง: ${runner.km}</span>
+        </div>
+        <p class="mt-2 text-gray-600">เบอร์โทรติดต่อ: <span class="font-medium">${runner.phone}</span></p>
+        <p class="text-gray-600">เบอร์ฉุกเฉิน: <span class="font-medium">${runner.emergencyPhone}</span></p>
+        <p class="mt-2 text-red-600 font-semibold">โรคประจำตัว: <span class="font-normal">${runner.disease || 'ไม่มีข้อมูล'}</span></p>
+      </div>
+    </div>
+  </div>
+`;
+
+
+        resultsContainer.appendChild(div);
+      });
+    } else {
+      resultsSection.style.display = 'none';
+      noResultsSection.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
